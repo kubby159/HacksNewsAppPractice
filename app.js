@@ -15,40 +15,61 @@ function getData(url){
 }
 
 
+function newsFeed() {
+    const newsFeed = getData(NEWSURL);//응답값을 객체로 바꾸기.
+    const newList = [];
 
-
-const newsFeed = getData(NEWSURL);//응답값을 객체로 바꾸기.
-const ul = document.createElement('ul');
-
-
-window.addEventListener('hashchange',function () {
-const id = location.hash.substr(1);
-console.log(id); //해시 데이터를 넘겨줌
-
-const newsContent = getData(CONTENT_URL.replace('@id',id));
-const title = document.createElement('h1');
-
-title.innerHTML = newsContent.title;
-content.appendChild(title);
-
-
-});
-
-
-for (let i = 0; i < newsFeed.length; i++) {
-    const div = document.createElement('div');
-
+    newList.push('<ul>');
+    for (let i = 0; i < newsFeed.length; i++) {
+        newList.push(`
+        <li>
+        <a href='#${newsFeed[i].id}'> ${newsFeed[i].title} (${newsFeed[i].comments_count})</a> 
+        
+        </li>
+        `);
+         
+    }
+    newList.push('</ul>');
     
-    div.innerHTML =  `
-    <li>
-    <a href='#${newsFeed[i].id}'> ${newsFeed[i].title} (${newsFeed[i].comments_count})</a> 
     
-    </li>
-    `;
-     
-    ul.appendChild(div.children[0]);
-    // ul.appendChild(div.firstElementChild);
+    container.innerHTML = newList.join('');
+    //join 은 여러 개의 배열데이터를 하나의 문자열로 만들어주는 기능을 재공함.
+    //join 의 첫 번째 요소로 구분자를 입력받게 되어있다. default 는 , 이다.
 }
 
-container.appendChild(ul);
-container.appendChild(content);
+
+
+
+const ul = document.createElement('ul');
+function newsDetail() {
+    const id = location.hash.substr(1);
+    const newsContent = getData(CONTENT_URL.replace('@id',id));
+    const title = document.createElement('h1');
+    
+    container.innerHTML = `
+    <h1>${newsContent.title}</h1>
+    <div>
+    <a href = '#'> 목록 </a>
+    </div>
+    `
+    
+    }
+
+
+
+//라우터
+function router() {
+
+    const routePath = location.hash;
+    if(routePath === '') {
+
+        newsFeed();
+        
+    } else {
+        newsDetail();
+    }
+
+}
+window.addEventListener('hashchange', router);
+
+router();
