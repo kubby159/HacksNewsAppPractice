@@ -20,8 +20,23 @@ function getData(url){
 function newsFeed() {
     const newsFeed = getData(NEWSURL);//응답값을 객체로 바꾸기.
     const newsList = [];
+    //m - margin, p - padding
+    let templete = `
+        <div class = 'container mx-auto p-4'>
+            <h1>Hacker News</h1>
+            <ul>
+                {{__news_feed__}}
+            </ul>
+        </div>
+        <div>
+            <a href = '#/page/{{__prev_page__}}'>이전페이지</a>
+            <a href = '#/page/{{__next_page__}}'>다음페이지</a>
+        </div>
+    </div>
+    `;
+    
 
-    newsList.push('<ul>');
+    
     for (let i = (store.currentPage - 1)*10; i < store.currentPage * 10; i++) {
         newsList.push(`
         <li>
@@ -32,16 +47,13 @@ function newsFeed() {
         `);
          
     }
-    newsList.push('</ul>');
-    newsList.push(`<div>
-    
-    <a href = '#/page/${store.currentPage > 1? store.currentPage - 1 : 1}'>이전페이지</a>
-    <a href = '#/page/${store.currentPage + 1}'>다음페이지</a>
-    
-    </div>`)
-    
-    
-    container.innerHTML = newsList.join('');
+
+    templete = templete.replace('{{__news_feed__}}',newsList.join(''));
+    templete = templete.replace('{{__prev_page__}}',store.currentPage > 1 ? store.currentPage - 1 : 1);
+    templete = templete.replace('{{__next_page__}}',store.currentPage + 1 );
+    console.log(templete);
+  
+    container.innerHTML = templete;
     //join 은 여러 개의 배열데이터를 하나의 문자열로 만들어주는 기능을 재공함.
     //join 의 첫 번째 요소로 구분자를 입력받게 되어있다. default 는 , 이다.
 }
